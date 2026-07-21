@@ -1,7 +1,7 @@
 :root {
     --primary-blue: #0056b3; /* Biru Letris */
     --accent-yellow: #ffc107; /* Kuning aksen */
-    --bg-white: #f8f9fa; /* Dasar abu sangat muda/putih */
+    --bg-white: #f8f9fa; /* Dasar abu sangat muda */
     --text-dark: #333333;
 }
 
@@ -12,15 +12,21 @@
 
 body { background-color: var(--bg-white); color: var(--text-dark); }
 
-/* Navbar */
+/* Styling Navbar Baru (Logo & Teks) */
 .navbar {
     background-color: var(--primary-blue);
-    padding: 15px 30px;
+    padding: 10px 20px;
     display: flex; justify-content: space-between; align-items: center;
-    color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-wrap: wrap; gap: 15px;
 }
-.navbar .logo { font-size: 24px; font-weight: bold; }
-.navbar .logo span { color: var(--accent-yellow); }
+.logo-container {
+    display: flex; align-items: center; gap: 10px;
+}
+.logo-img {
+    height: 45px; width: auto; /* Mengatur tinggi logo proporsional */
+}
+.logo-text { font-size: 22px; font-weight: bold; }
+.logo-text span { color: var(--accent-yellow); }
 
 .nav-menu { display: flex; gap: 10px; }
 .nav-btn {
@@ -61,6 +67,12 @@ input[type="text"], input[type="date"], input[type="file"] {
 .btn:hover { opacity: 0.9; }
 .w-100 { width: 100%; margin-top: 15px; }
 .mt-2 { margin-top: 20px; }
+
+/* Tombol Aksi di Riwayat */
+.action-group {
+    display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap;
+}
+.action-group input { flex: 1; min-width: 150px; }
 
 /* Hasil Pencarian */
 .results-box { border: 1px solid #ddd; border-radius: 5px; margin-top: 10px; max-height: 200px; overflow-y: auto; background: white; }

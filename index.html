@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pendataan Terlambat | SMK Letris Pamulang</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">SMK LETRIS <span>PAMULANG</span></div>
+        <div class="nav-menu">
+            <button class="nav-btn active" onclick="navigate('dashboard')">Dashboard</button>
+            <button class="nav-btn" onclick="navigate('input')">Input Terlambat</button>
+            <button class="nav-btn" onclick="navigate('riwayat')">Riwayat</button>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Halaman Dashboard -->
+        <section id="dashboard" class="page active">
+            <h2>Dashboard Data Siswa</h2>
+            <div class="cards">
+                <div class="card blue">
+                    <h3>Total Siswa Keseluruhan</h3>
+                    <h1 id="dash-total">Loading...</h1>
+                </div>
+                <div class="card yellow">
+                    <h3 class="text-blue">Siswa Laki-Laki</h3>
+                    <h1 id="dash-l" class="text-blue">...</h1>
+                </div>
+                <div class="card blue">
+                    <h3>Siswa Perempuan</h3>
+                    <h1 id="dash-p">...</h1>
+                </div>
+            </div>
+        </section>
+
+        <!-- Halaman Input Terlambat -->
+        <section id="input" class="page hidden">
+            <h2>Pendataan Siswa Terlambat</h2>
+            
+            <div class="form-card">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Ketik Nama atau Kelas (Cth: Bintang atau X PPLG 2)...">
+                    <button class="btn btn-yellow text-blue" onclick="searchStudent()">Cari Siswa</button>
+                </div>
+                
+                <div id="searchResults" class="results-box hidden"></div>
+
+                <div id="selectedStudentForm" class="hidden">
+                    <hr>
+                    <h3 class="mt-2 text-blue">Formulir Keterlambatan</h3>
+                    <form id="lateForm" onsubmit="submitLateData(event)">
+                        <input type="hidden" id="form-nis">
+                        <div class="info-group">
+                            <p><strong>Nama: </strong> <span id="form-nama"></span></p>
+                            <p><strong>Kelas: </strong> <span id="form-kelas"></span></p>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Catatan Khusus (Opsional):</label>
+                            <input type="text" id="form-catatan" placeholder="Cth: Alasan macet, bangun kesiangan...">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Foto Bukti (Opsional):</label>
+                            <input type="file" id="form-foto" accept="image/*">
+                        </div>
+
+                        <button type="submit" class="btn btn-blue w-100" id="btnSubmit">Simpan Pendataan</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Halaman Riwayat -->
+        <section id="riwayat" class="page hidden">
+            <h2>Riwayat Keterlambatan</h2>
+            <div class="form-card filter-box">
+                <label>Filter Tanggal:</label>
+                <input type="date" id="filterDate">
+                <button class="btn btn-yellow text-blue" onclick="loadHistory()">Tampilkan Data</button>
+            </div>
+
+            <div class="table-container mt-2">
+                <table id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>Waktu</th>
+                            <th>Nama Siswa</th>
+                            <th>Kelas</th>
+                            <th>Catatan</th>
+                            <th>Foto</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <!-- Data masuk ke sini lewat JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

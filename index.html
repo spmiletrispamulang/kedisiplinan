@@ -4,47 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Pendataan Terlambat | SMK Letris Pamulang</title>
+    
+    <!-- Memanggil Icon Web (Favicon) -->
+    <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="style.css">
+
+    <!-- Library untuk Generate PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="logo">SMK LETRIS <span>PAMULANG</span></div>
+        <div class="logo-container">
+            <!-- Menampilkan Logo -->
+            <img src="logo.png" alt="Logo SMK Letris" class="logo-img">
+            <div class="logo-text">SMK LETRIS <span>PAMULANG</span></div>
+        </div>
         <div class="nav-menu">
             <button class="nav-btn active" onclick="navigate('dashboard')">Dashboard</button>
-            <button class="nav-btn" onclick="navigate('input')">Input Terlambat</button>
+            <button class="nav-btn" onclick="navigate('input')">Input</button>
             <button class="nav-btn" onclick="navigate('riwayat')">Riwayat</button>
         </div>
     </nav>
 
     <main>
-        <!-- Halaman Dashboard -->
+        <!-- Halaman Dashboard (Tetap Sama) -->
         <section id="dashboard" class="page active">
             <h2>Dashboard Data Siswa</h2>
             <div class="cards">
                 <div class="card blue">
-                    <h3>Total Siswa Keseluruhan</h3>
+                    <h3>Total Siswa</h3>
                     <h1 id="dash-total">Loading...</h1>
                 </div>
                 <div class="card yellow">
-                    <h3 class="text-blue">Siswa Laki-Laki</h3>
+                    <h3 class="text-blue">Laki-Laki</h3>
                     <h1 id="dash-l" class="text-blue">...</h1>
                 </div>
                 <div class="card blue">
-                    <h3>Siswa Perempuan</h3>
+                    <h3>Perempuan</h3>
                     <h1 id="dash-p">...</h1>
                 </div>
             </div>
         </section>
 
-        <!-- Halaman Input Terlambat -->
+        <!-- Halaman Input (Tetap Sama) -->
         <section id="input" class="page hidden">
             <h2>Pendataan Siswa Terlambat</h2>
             
             <div class="form-card">
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Ketik Nama atau Kelas (Cth: Bintang atau X PPLG 2)...">
-                    <button class="btn btn-yellow text-blue" onclick="searchStudent()">Cari Siswa</button>
+                    <input type="text" id="searchInput" placeholder="Cari Nama atau Kelas...">
+                    <button class="btn btn-yellow text-blue" onclick="searchStudent()">Cari</button>
                 </div>
                 
                 <div id="searchResults" class="results-box hidden"></div>
@@ -61,7 +72,7 @@
                         
                         <div class="input-group">
                             <label>Catatan Khusus (Opsional):</label>
-                            <input type="text" id="form-catatan" placeholder="Cth: Alasan macet, bangun kesiangan...">
+                            <input type="text" id="form-catatan" placeholder="Cth: Macet, bangun kesiangan...">
                         </div>
 
                         <div class="input-group">
@@ -75,13 +86,16 @@
             </div>
         </section>
 
-        <!-- Halaman Riwayat -->
+        <!-- Halaman Riwayat (Diperbarui dengan Tombol PDF & Kolom NIS) -->
         <section id="riwayat" class="page hidden">
             <h2>Riwayat Keterlambatan</h2>
-            <div class="form-card filter-box">
-                <label>Filter Tanggal:</label>
-                <input type="date" id="filterDate">
-                <button class="btn btn-yellow text-blue" onclick="loadHistory()">Tampilkan Data</button>
+            <div class="form-card">
+                <label style="font-weight:bold; color:var(--primary-blue)">Filter Tanggal & Cetak Laporan:</label>
+                <div class="action-group">
+                    <input type="date" id="filterDate">
+                    <button class="btn btn-yellow text-blue" onclick="loadHistory()">Tampilkan</button>
+                    <button class="btn btn-blue" onclick="downloadPDF()">Download PDF</button>
+                </div>
             </div>
 
             <div class="table-container mt-2">
@@ -89,6 +103,7 @@
                     <thead>
                         <tr>
                             <th>Waktu</th>
+                            <th>NIS</th>
                             <th>Nama Siswa</th>
                             <th>Kelas</th>
                             <th>Catatan</th>
@@ -96,7 +111,7 @@
                         </tr>
                     </thead>
                     <tbody id="historyBody">
-                        <!-- Data masuk ke sini lewat JS -->
+                        <!-- Data JS -->
                     </tbody>
                 </table>
             </div>

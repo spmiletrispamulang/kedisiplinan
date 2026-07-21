@@ -1,5 +1,8 @@
 // ====== GANTI URL DI BAWAH INI DENGAN URL WEB APP MILIK ANDA ======
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwChMdirBH9PsQjENa_cQzUmB_Hk3kz_l3S7dFRJaSlE_NNELO-ll_FzqB-78mxaqy3OQ/exec";
+const SCRIPT_URL = "URL_GOOGLE_APPS_SCRIPT_ANDA_DISINI";
+
+// Variabel global untuk menyimpan data riwayat sementara agar bisa dicetak ke PDF
+let currentHistoryData = [];
 
 // Sistem Navigasi Antar Menu
 function navigate(pageId) {
@@ -107,9 +110,9 @@ async function submitLateData(e) {
     }
 }
 
+// Mengirim Data Ke Google Apps Script
 async function sendData(payload, btn) {
     try {
-        // Menggunakan text/plain untuk melewati batasan CORS preflight
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' }, 
@@ -134,13 +137,12 @@ async function sendData(payload, btn) {
 async function loadHistory() {
     let dateVal = document.getElementById('filterDate').value;
     if (!dateVal) {
-        // Default hari ini jika belum milih
         dateVal = new Date().toISOString().split('T')[0];
         document.getElementById('filterDate').value = dateVal; 
     }
 
     const tbody = document.getElementById('historyBody');
-    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Sedang memuat data...</td></tr>";
+    tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Sedang memuat data...</td></tr>";
 
     try {
         const response = await fetch(`${SCRIPT_URL}?action=getLateRecords&date=${dateVal}`);
@@ -148,16 +150,20 @@ async function loadHistory() {
 
         tbody.innerHTML = "";
         if (result.data.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Tidak ada siswa terlambat pada tanggal ini.</td></tr>";
+            currentHistoryData = []; // Kosongkan data
+            tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Tidak ada siswa terlambat pada tanggal ini.</td></tr>";
             return;
         }
 
+        currentHistoryData = result.data; // Simpan data ke variabel global
+
         result.data.forEach(row => {
             let tr = document.createElement('tr');
-            let fotoHtml = row.url.includes("http") ? `<a href="${row.url}" target="_blank" class="img-link">Lihat Foto</a>` : "-";
+            let fotoHtml = row.url && row.url.includes("http") ? `<a href="${row.url}" target="_blank" class="img-link">Lihat Foto</a>` : "-";
             
             tr.innerHTML = `
                 <td>${row.waktu}</td>
+                <td>${row.nis}</td>
                 <td><strong>${row.nama}</strong></td>
                 <td>${row.kelas}</td>
                 <td>${row.catatan}</td>
@@ -166,8 +172,55 @@ async function loadHistory() {
             tbody.appendChild(tr);
         });
     } catch (error) {
-        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Gagal memuat data.</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Gagal memuat data.</td></tr>";
     }
+}
+
+// 6. Fungsi Generate File PDF
+function downloadPDF() {
+    if (currentHistoryData.length === 0) {
+        alert("Tidak ada data terlambat untuk didownload pada tanggal tersebut.");
+        return;
+    }
+
+    // Memanggil jsPDF dari library yang dipasang di index.html
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const dateVal = document.getElementById('filterDate').value;
+
+    // Menambah Judul ke PDF
+    doc.setFontSize(16);
+    doc.text("Laporan Data Siswa Terlambat", 14, 15);
+    doc.setFontSize(11);
+    doc.text(`Instansi: SMK Letris Pamulang | Tanggal Laporan: ${dateVal}`, 14, 22);
+
+    // Menyusun data baris
+    const tableColumn = ["Waktu", "NIS", "Nama Siswa", "Kelas", "Catatan"];
+    const tableRows = [];
+
+    currentHistoryData.forEach(row => {
+        const rowData = [
+            row.waktu,
+            row.nis,
+            row.nama,
+            row.kelas,
+            row.catatan || "-"
+        ];
+        tableRows.push(rowData);
+    });
+
+    // Generate AutoTable
+    doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+        startY: 28,
+        theme: 'grid',
+        headStyles: { fillColor: [0, 86, 179] }, // Biru Letris
+        styles: { fontSize: 9 }
+    });
+
+    // Save/Download File
+    doc.save(`Laporan_Terlambat_${dateVal}.pdf`);
 }
 
 // Otomatis load dashboard saat web dibuka

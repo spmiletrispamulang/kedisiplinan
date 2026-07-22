@@ -65,9 +65,11 @@
                     <h3 class="mt-2 text-blue">Formulir Keterlambatan</h3>
                     <form id="lateForm" onsubmit="submitLateData(event)">
                         <input type="hidden" id="form-nis">
+                        <input type="hidden" id="form-walikelas"> <!-- Input tersembunyi untuk Wali Kelas -->
                         <div class="info-group">
                             <p><strong>Nama: </strong> <span id="form-nama"></span></p>
                             <p><strong>Kelas: </strong> <span id="form-kelas"></span></p>
+                            <p><strong>Wali Kelas: </strong> <span id="form-wali-tampil"></span></p> <!-- Menampilkan Wali Kelas -->
                         </div>
                         
                         <div class="input-group">
@@ -106,6 +108,7 @@
                             <th>NIS</th>
                             <th>Nama Siswa</th>
                             <th>Kelas</th>
+                            <th>Wali Kelas</th> <!-- Kolom Baru -->
                             <th>Catatan</th>
                             <th>Foto</th>
                         </tr>

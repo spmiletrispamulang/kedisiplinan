@@ -32,7 +32,7 @@ async function loadDashboard() {
     }
 }
 
-// 2. Pencarian Siswa (Diperbarui)
+// 2. Pencarian Siswa
 async function searchStudent() {
     const query = document.getElementById('searchInput').value;
     const resultBox = document.getElementById('searchResults');
@@ -67,20 +67,20 @@ async function searchStudent() {
     }
 }
 
-// 3. Menampilkan Formulir Saat Siswa Diklik (Diperbarui)
+// 3. Menampilkan Formulir Saat Siswa Diklik
 function selectStudent(siswa) {
     document.getElementById('searchResults').classList.add('hidden');
     document.getElementById('selectedStudentForm').classList.remove('hidden');
     
     document.getElementById('form-nis').value = siswa.nis;
-    document.getElementById('form-walikelas').value = siswa.wali_kelas; // Simpan di form tersembunyi
+    document.getElementById('form-walikelas').value = siswa.wali_kelas;
     
     document.getElementById('form-nama').innerText = siswa.nama;
     document.getElementById('form-kelas').innerText = siswa.kelas;
-    document.getElementById('form-wali-tampil').innerText = siswa.wali_kelas; // Tampilkan teksnya
+    document.getElementById('form-wali-tampil').innerText = siswa.wali_kelas;
 }
 
-// 4. Proses Submit (Diperbarui)
+// 4. Proses Submit (Membaca file gambar jika ada)
 async function submitLateData(e) {
     e.preventDefault();
     const btn = document.getElementById('btnSubmit');
@@ -94,7 +94,7 @@ async function submitLateData(e) {
         nis: document.getElementById('form-nis').value,
         nama: document.getElementById('form-nama').innerText,
         kelas: document.getElementById('form-kelas').innerText,
-        wali_kelas: document.getElementById('form-walikelas').value, // Kirim ke Backend
+        wali_kelas: document.getElementById('form-walikelas').value,
         catatan: document.getElementById('form-catatan').value,
         foto_base64: null,
         foto_name: null
@@ -113,7 +113,42 @@ async function submitLateData(e) {
     }
 }
 
-// 5. Load Riwayat Keterlambatan (Diperbarui)
+// Fungsi Mengirim Data Ke Google Apps Script (Diperkuat dengan Mode Kebal Hang)
+async function sendData(payload, btn) {
+    console.log("Memulai pengiriman data ke Apps Script...", payload);
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors', // Menegaskan izin CORS lintas domain
+            redirect: 'follow', // Memaksa browser mengikuti alur pengalihan Google
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+            body: JSON.stringify(payload)
+        });
+        
+        console.log("Respon diterima dari server, mencoba membaca JSON...", response);
+        const result = await response.json();
+        console.log("Hasil JSON dari server:", result);
+        
+        if (result.status === 'success') {
+            alert("Berhasil! Data siswa terlambat sudah dicatat.");
+            document.getElementById('lateForm').reset();
+            document.getElementById('selectedStudentForm').classList.add('hidden');
+            document.getElementById('searchInput').value = "";
+        } else {
+            alert("Server gagal memproses: " + (result.message || "Unknown Error"));
+        }
+    } catch (error) {
+        console.error("Error terjadi saat proses POST:", error);
+        alert("Gagal terhubung ke Google Sheets.\nDetail: " + error.message + "\n\n1. Pastikan ekstensi Ad-Blocker mati.\n2. Pastikan Apps Script di-deploy dengan akses 'Anyone'.");
+    } finally {
+        // Blok ini dijamin AKAN SELALU JALAN baik sukses maupun gagal agar tombol kembali aktif
+        console.log("Proses selesai, mengembalikan tombol ke semula.");
+        btn.innerText = "Simpan Pendataan";
+        btn.disabled = false;
+    }
+}
+
+// 5. Load Riwayat Keterlambatan
 async function loadHistory() {
     let dateVal = document.getElementById('filterDate').value;
     if (!dateVal) {
@@ -146,7 +181,7 @@ async function loadHistory() {
                 <td>${row.nis}</td>
                 <td><strong>${row.nama}</strong></td>
                 <td>${row.kelas}</td>
-                <td>${row.wali_kelas}</td> <!-- Tampilkan Wali Kelas -->
+                <td>${row.wali_kelas}</td>
                 <td>${row.catatan}</td>
                 <td>${fotoHtml}</td>
             `;
@@ -157,7 +192,7 @@ async function loadHistory() {
     }
 }
 
-// 6. Fungsi Generate File PDF (Diperbarui)
+// 6. Fungsi Generate File PDF
 function downloadPDF() {
     if (currentHistoryData.length === 0) {
         alert("Tidak ada data terlambat untuk didownload pada tanggal tersebut.");
@@ -173,7 +208,6 @@ function downloadPDF() {
     doc.setFontSize(11);
     doc.text(`Instansi: SMK Letris Pamulang | Tanggal Laporan: ${dateVal}`, 14, 22);
 
-    // Tambah Header Wali Kelas
     const tableColumn = ["Waktu", "NIS", "Nama Siswa", "Kelas", "Wali Kelas", "Catatan"];
     const tableRows = [];
 
@@ -183,7 +217,7 @@ function downloadPDF() {
             row.nis,
             row.nama,
             row.kelas,
-            row.wali_kelas, // Data Wali Kelas
+            row.wali_kelas,
             row.catatan || "-"
         ];
         tableRows.push(rowData);

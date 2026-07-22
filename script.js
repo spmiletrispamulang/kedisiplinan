@@ -1,5 +1,5 @@
 // ====== GANTI URL DI BAWAH INI DENGAN URL WEB APP MILIK ANDA ======
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwChMdirBH9PsQjENa_cQzUmB_Hk3kz_l3S7dFRJaSlE_NNELO-ll_FzqB-78mxaqy3OQ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxIgXsknXwYtl8pC1AWxI9W7C-Dfd0SHWl9uXrNWPEl67NRrZqYzE2aeJOgT4EYM_PmKw/exec";
 
 // Variabel global untuk menyimpan data riwayat sementara agar bisa dicetak ke PDF
 let currentHistoryData = [];

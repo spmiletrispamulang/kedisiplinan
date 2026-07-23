@@ -109,3 +109,175 @@ tr:hover { background-color: #f9f9f9; }
 .info-wali {
     margin-top: 10px; font-size: 14px; background: #fff3cd; padding: 8px; border-radius: 5px; color: #856404; font-weight: bold;
 }
+
+/* ========================================================= */
+/* KODE RESPONSIVITAS (UNTUK HP DAN TABLET)                  */
+/* ========================================================= */
+
+/* Media Query untuk Tablet (Max-width: 768px) */
+@media screen and (max-width: 768px) {
+    /* Navbar dan Jam */
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+    .logo-container {
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    .logo-img {
+        height: 35px; /* Sedikit dikecilkan */
+    }
+    .logo-text {
+        font-size: 18px;
+    }
+    #realtime-clock {
+        border-left: none !important;
+        padding-left: 0 !important;
+        margin-left: auto !important; /* Dorong jam ke ujung kanan */
+        font-size: 16px !important;
+    }
+
+    /* Menu Navigasi */
+    .nav-menu {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 5px;
+    }
+    .nav-btn {
+        flex: 1; /* Tombol menu bagi rata ruang */
+        text-align: center;
+        padding: 10px 5px;
+        font-size: 14px;
+    }
+
+    /* Kartu Dashboard */
+    .cards {
+        grid-template-columns: 1fr 1fr; /* 2 kolom di tablet */
+    }
+    .card h1 {
+        font-size: 2.2rem;
+    }
+
+    /* Form Input & Tombol */
+    .search-box {
+        flex-direction: column;
+    }
+    .btn {
+        width: 100%;
+        padding: 12px;
+    }
+    
+    /* Grafik Analytics */
+    .analytics-container {
+        flex-direction: column;
+    }
+    .chart-box {
+        width: 100%;
+    }
+}
+
+/* Media Query untuk Handphone / Mobile (Max-width: 480px) */
+@media screen and (max-width: 480px) {
+    /* Layout Utama */
+    main {
+        margin: 15px auto;
+        padding: 0 10px;
+    }
+    h2 {
+        font-size: 20px;
+    }
+
+    /* Susunan Header Navbar HP */
+    .logo-container {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+    #realtime-clock {
+        margin: 10px auto 0 auto !important;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Kartu Dashboard (1 Kolom Penuh) */
+    .cards {
+        grid-template-columns: 1fr; 
+    }
+
+    /* Tabel Menjadi Card View (Khusus HP) */
+    .table-container {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        background: transparent;
+    }
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    tr {
+        background: white;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        padding: 10px;
+    }
+    td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 40% !important; /* Beri ruang untuk label pseudo */
+        text-align: right;
+        min-height: 40px;
+    }
+    td:last-child {
+        border-bottom: 0;
+    }
+    
+    /* Label buatan untuk Tabel Riwayat HP */
+    td::before {
+        content: attr(data-label); /* Mengambil nama label dari HTML (opsional) */
+        position: absolute;
+        left: 10px;
+        width: 35%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: var(--primary-blue);
+    }
+
+    /* Secara Spesifik Menambahkan Label untuk Tabel Riwayat */
+    #historyTable td:nth-of-type(1):before { content: "Waktu:"; }
+    #historyTable td:nth-of-type(2):before { content: "NIS:"; }
+    #historyTable td:nth-of-type(3):before { content: "Nama:"; }
+    #historyTable td:nth-of-type(4):before { content: "Kelas:"; }
+    #historyTable td:nth-of-type(5):before { content: "Wali Kelas:"; }
+    #historyTable td:nth-of-type(6):before { content: "Catatan:"; }
+    #historyTable td:nth-of-type(7):before { content: "Foto:"; }
+
+    /* Secara Spesifik Menambahkan Label untuk Tabel Rekap (>1 Kali) */
+    #rekap td:nth-of-type(1):before { content: "No:"; }
+    #rekap td:nth-of-type(2):before { content: "NIS:"; }
+    #rekap td:nth-of-type(3):before { content: "Nama:"; }
+    #rekap td:nth-of-type(4):before { content: "Kelas:"; }
+    #rekap td:nth-of-type(5):before { content: "Wali Kelas:"; }
+    #rekap td:nth-of-type(6):before { content: "Jumlah:"; }
+
+    /* Atur teks di dalam sel Tabel agar rapi */
+    #historyTable td, #rekap td {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+}
+

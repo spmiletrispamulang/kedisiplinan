@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pendataan Terlambat | SMK Letris Pamulang</title>
-    
-    <!-- Memanggil Icon Web (Favicon) -->
+    <title>Sistem Pendataan Terlambat | SMK Letris</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="style.css">
-
-    <!-- Library untuk Generate PDF -->
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <!-- Library Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="logo-container">
-            <!-- Menampilkan Logo -->
             <img src="logo.png" alt="Logo SMK Letris" class="logo-img">
             <div class="logo-text">SMK LETRIS <span>PAMULANG</span></div>
         </div>
@@ -25,39 +22,48 @@
             <button class="nav-btn active" onclick="navigate('dashboard')">Dashboard</button>
             <button class="nav-btn" onclick="navigate('input')">Input</button>
             <button class="nav-btn" onclick="navigate('riwayat')">Riwayat</button>
+            <!-- Tombol Baru -->
+            <button class="nav-btn" onclick="navigate('rekap')">Rekap (>1 Kali)</button>
         </div>
     </nav>
 
     <main>
-        <!-- Halaman Dashboard (Tetap Sama) -->
+        <!-- Halaman Dashboard (Diperbarui dengan Analitik Grafik) -->
         <section id="dashboard" class="page active">
-            <h2>Dashboard Data Siswa</h2>
+            <h2>Dashboard Statistik</h2>
+            <div id="desc_dashboard" class="dynamic-note"></div> <!-- Tempat Teks Dinamis -->
+            
             <div class="cards">
-                <div class="card blue">
-                    <h3>Total Siswa</h3>
-                    <h1 id="dash-total">Loading...</h1>
+                <div class="card blue"><h3>Total Siswa</h3><h1 id="dash-total">Loading...</h1></div>
+                <div class="card yellow"><h3 class="text-blue">Laki-Laki</h3><h1 id="dash-l" class="text-blue">...</h1></div>
+                <div class="card blue"><h3>Perempuan</h3><h1 id="dash-p">...</h1></div>
+                <div class="card yellow"><h3 class="text-blue">Total Data Terlambat</h3><h1 id="dash-terlambat" class="text-blue">...</h1></div>
+            </div>
+
+            <!-- Analisis Grafik -->
+            <div class="analytics-container mt-2">
+                <div class="chart-box">
+                    <h3 class="text-blue">Siswa Paling Sering Terlambat</h3>
+                    <canvas id="chartSiswa"></canvas>
                 </div>
-                <div class="card yellow">
-                    <h3 class="text-blue">Laki-Laki</h3>
-                    <h1 id="dash-l" class="text-blue">...</h1>
-                </div>
-                <div class="card blue">
-                    <h3>Perempuan</h3>
-                    <h1 id="dash-p">...</h1>
+                <div class="chart-box">
+                    <h3 class="text-blue">Kelas Paling Sering Terlambat</h3>
+                    <canvas id="chartKelas"></canvas>
+                    <div id="infoKelasTop" class="info-wali"></div>
                 </div>
             </div>
         </section>
 
-        <!-- Halaman Input (Tetap Sama) -->
+        <!-- Halaman Input -->
         <section id="input" class="page hidden">
             <h2>Pendataan Siswa Terlambat</h2>
+            <div id="desc_input" class="dynamic-note"></div>
             
             <div class="form-card">
                 <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Cari Nama atau Kelas...">
+                    <input type="text" id="searchInput" placeholder="Cari Nama, Kelas, atau Wali Kelas...">
                     <button class="btn btn-yellow text-blue" onclick="searchStudent()">Cari</button>
                 </div>
-                
                 <div id="searchResults" class="results-box hidden"></div>
 
                 <div id="selectedStudentForm" class="hidden">
@@ -65,62 +71,61 @@
                     <h3 class="mt-2 text-blue">Formulir Keterlambatan</h3>
                     <form id="lateForm" onsubmit="submitLateData(event)">
                         <input type="hidden" id="form-nis">
-                        <input type="hidden" id="form-walikelas"> <!-- Input tersembunyi untuk Wali Kelas -->
+                        <input type="hidden" id="form-walikelas">
                         <div class="info-group">
                             <p><strong>Nama: </strong> <span id="form-nama"></span></p>
                             <p><strong>Kelas: </strong> <span id="form-kelas"></span></p>
-                            <p><strong>Wali Kelas: </strong> <span id="form-wali-tampil"></span></p> <!-- Menampilkan Wali Kelas -->
+                            <p><strong>Wali Kelas: </strong> <span id="form-wali-tampil"></span></p>
                         </div>
                         
                         <div class="input-group">
                             <label>Catatan Khusus (Opsional):</label>
                             <input type="text" id="form-catatan" placeholder="Cth: Macet, bangun kesiangan...">
                         </div>
-
                         <div class="input-group">
                             <label>Foto Bukti (Opsional):</label>
                             <input type="file" id="form-foto" accept="image/*">
                         </div>
-
                         <button type="submit" class="btn btn-blue w-100" id="btnSubmit">Simpan Pendataan</button>
                     </form>
                 </div>
             </div>
         </section>
 
-        <!-- Halaman Riwayat (Diperbarui dengan Tombol PDF & Kolom NIS) -->
+        <!-- Halaman Riwayat -->
         <section id="riwayat" class="page hidden">
-            <h2>Riwayat Keterlambatan</h2>
+            <h2>Riwayat Keterlambatan Harian</h2>
+            <div id="desc_riwayat" class="dynamic-note"></div>
+
             <div class="form-card">
-                <label style="font-weight:bold; color:var(--primary-blue)">Filter Tanggal & Cetak Laporan:</label>
+                <label style="font-weight:bold; color:var(--primary-blue)">Filter Tanggal & Cetak:</label>
                 <div class="action-group">
                     <input type="date" id="filterDate">
                     <button class="btn btn-yellow text-blue" onclick="loadHistory()">Tampilkan</button>
                     <button class="btn btn-blue" onclick="downloadPDF()">Download PDF</button>
                 </div>
             </div>
-
             <div class="table-container mt-2">
                 <table id="historyTable">
-                    <thead>
-                        <tr>
-                            <th>Waktu</th>
-                            <th>NIS</th>
-                            <th>Nama Siswa</th>
-                            <th>Kelas</th>
-                            <th>Wali Kelas</th> <!-- Kolom Baru -->
-                            <th>Catatan</th>
-                            <th>Foto</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historyBody">
-                        <!-- Data JS -->
-                    </tbody>
+                    <thead><tr><th>Waktu</th><th>NIS</th><th>Nama Siswa</th><th>Kelas</th><th>Wali Kelas</th><th>Catatan</th><th>Foto</th></tr></thead>
+                    <tbody id="historyBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Halaman Baru: Rekap Sering Terlambat -->
+        <section id="rekap" class="page hidden">
+            <h2>Rekap Siswa Sering Terlambat (> 1 Kali)</h2>
+            <div id="desc_rekap" class="dynamic-note"></div>
+
+            <div class="table-container mt-2">
+                <table>
+                    <thead><tr><th>No</th><th>NIS</th><th>Nama Siswa</th><th>Kelas</th><th>Wali Kelas</th><th>Jml Terlambat</th></tr></thead>
+                    <tbody id="rekapBody"></tbody>
                 </table>
             </div>
         </section>
     </main>
-
     <script src="script.js"></script>
 </body>
 </html>

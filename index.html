@@ -13,17 +13,22 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <!-- Navbar (Diperbarui dengan Jam dan Nama Tombol) -->
     <nav class="navbar">
         <div class="logo-container">
             <img src="logo.png" alt="Logo SMK Letris" class="logo-img">
             <div class="logo-text">SMK LETRIS <span>PAMULANG</span></div>
+            <!-- Elemen Jam Digital Baru -->
+            <div id="realtime-clock" style="margin-left: 20px; font-weight: bold; color: var(--accent-yellow); font-size: 18px; border-left: 2px solid white; padding-left: 20px;">
+                00:00:00
+            </div>
         </div>
         <div class="nav-menu">
             <button class="nav-btn active" onclick="navigate('dashboard')">Dashboard</button>
             <button class="nav-btn" onclick="navigate('input')">Input</button>
             <button class="nav-btn" onclick="navigate('riwayat')">Riwayat</button>
-            <!-- Tombol Baru -->
-            <button class="nav-btn" onclick="navigate('rekap')">Rekap (>1 Kali)</button>
+            <!-- Nama Tombol Diubah -->
+            <button class="nav-btn" onclick="navigate('rekap')">Rekap</button>
         </div>
     </nav>
 

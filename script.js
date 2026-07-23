@@ -288,5 +288,25 @@ function downloadPDF() {
     doc.save(`Laporan_Terlambat_${dateVal}.pdf`);
 }
 
+// ==========================================
+// FITUR JAM REAL-TIME DI HEADER
+// ==========================================
+function startClock() {
+    const clockElement = document.getElementById('realtime-clock');
+    if (!clockElement) return;
+
+    setInterval(() => {
+        const now = new Date();
+        const jam = String(now.getHours()).padStart(2, '0');
+        const menit = String(now.getMinutes()).padStart(2, '0');
+        const detik = String(now.getSeconds()).padStart(2, '0');
+        clockElement.innerText = `${jam}:${menit}:${detik} WIB`;
+    }, 1000); // Perbarui setiap 1 detik (1000 ms)
+}
+// ==========================================
+
 // Menjalankan dashboard secara otomatis saat web dibuka
-window.onload = loadDashboard;
+window.onload = function() {
+    loadDashboard();
+    startClock(); // Memulai jam saat web dibuka
+};
